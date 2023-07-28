@@ -4,6 +4,8 @@ import warnings
 from contextlib import AsyncExitStack
 from typing import TYPE_CHECKING, Any, Dict, Iterable, List, Optional, Union
 from uuid import UUID
+from dotenv import load_dotenv
+import os
 
 import httpcore
 import httpx
@@ -112,6 +114,9 @@ if TYPE_CHECKING:
 
 from prefect.client.base import PrefectHttpxClient, app_lifespan_context
 
+load_dotenv()
+PREFECT_TOKEN = os.getenv("PREFECT_TOKEN")
+
 
 class ServerType(AutoEnum):
     EPHEMERAL = AutoEnum.auto()
@@ -192,6 +197,7 @@ class PrefectClient:
 
             api_version = SERVER_API_VERSION
         httpx_settings["headers"].setdefault("X-PREFECT-API-VERSION", api_version)
+        httpx_settings["headers"].setdefault("token", PREFECT_TOKEN)
         if api_key:
             httpx_settings["headers"].setdefault("Authorization", f"Bearer {api_key}")
 
